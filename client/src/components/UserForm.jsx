@@ -1,4 +1,5 @@
-import  { useState } from 'react';
+import { useState } from 'react';
+import axios from 'axios';
 
 // eslint-disable-next-line react/prop-types
 function UserForm({ onUserRegistered }) {
@@ -11,22 +12,14 @@ function UserForm({ onUserRegistered }) {
     const user = { nombre, correo, edad: parseInt(edad) };
 
     try {
-      const response = await fetch('http://localhost:3000/usuarios', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(user),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        onUserRegistered(data.usuario);
-        setNombre('');
-        setCorreo('');
-        setEdad('');
-      } else {
-        alert(data.error);
-      }
+      const response = await axios.post('http://localhost:3000/usuarios', user);
+      onUserRegistered(response.data.usuario);
+      setNombre('');
+      setCorreo('');
+      setEdad('');
     } catch (error) {
       console.error('Error al registrar usuario:', error);
+      alert(error.response?.data?.error || 'Error al registrar usuario');
     }
   };
 
